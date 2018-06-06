@@ -50,13 +50,13 @@ class FeedForm extends Component {
 
     this.handleInput = this.handleInput.bind(this);
     this.feedData = {
-      feedName: '',
-      feedUrl: '',
-      postType: '',
-      readFrequency: '',
-      noPost: '',
-      hashtag: '',
-      logininId: '7585',
+      feedName: 'google',
+      feedUrl: 'rss.cnn.com/rss/edition.rss',
+      postType: 'text',
+      readFrequency: '6',
+      noPost: '5',
+      hashtag: '#social',
+      loginIds: '7585',
     };
     this.updateFeedData = this.updateFeedData.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
@@ -175,7 +175,8 @@ class FeedForm extends Component {
             feedpostwarning: feedPostError,
           });
         }
-
+      case 'feedhashtag':
+        this.feedData.feedhashtag = {};
         break;
     }
   }
@@ -321,11 +322,13 @@ const mapDispatchToProps = dispatch => ({
       type: 'ADD_FEED',
       payload: new Promise((resolve, reject) => {
         axios
-          .post('http://192.168.1.121:3000/feed/create', feedData, {
+          .post('http://192.168.1.146:3000/feed/create', feedData, {
             headers: {
               Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOjE4NzUyLCJyb2xlIjoidXNlciIsImNsaWVudElkIjoiM2Z3Y3pmd2w0NXFzdWJ1eDdibzUydHpscWxrN2h4MWtkeHhjZHV4aCIsImlhdCI6MTUyNzIyNzc1NywiZXhwIjoxNTMyNDExNzU3fQ.IdnMCuCDYQDmb5sIPlnO6h1wzEhOB3pXH9ontQo-ypc',
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOjI1MjMwLCJyb2xlIjoidXNlciIsImNsaWVudElkIjoiMTQ4czBuaW82MzFnZmFoYmRlc3JndDJhNHUwMnZ6aXczcW8zZTdyayIsImlhdCI6MTUyODI5Mjg3OSwiZXhwIjoxNTMzNDc2ODc5fQ.FSoT4sOHl669za9xpqPSCCY0itcPIrhOnMgg0_LQhwQ',
               ContentType: 'application/json',
+              UserAgent:
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36',
             },
           })
           .then(response => {
