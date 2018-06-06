@@ -9,3 +9,5 @@ const formWarning = props => <HelpBlock bsClass="warning">{props.msg}</HelpBlock
 formWarning.propTypes = {
   msg: PropTypes.string.isRequired,
 };
+
+export default formWarning;
