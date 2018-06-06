@@ -1,0 +1,18 @@
+.page-content-header {
+  float: left;
+  width: 100%;
+  padding: 36px 0 15px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+.page-content-header-title {
+  position: relative;
+}
+.page-content-header-title h1 {
+  color: #2f3b4c;
+  font-family: "MuseoSansCyrl-300";
+  font-size: 22px;
+  margin: 0;
+  color: #2f3b4c;
+  font-weight: normal;
+}
