@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -46,17 +46,21 @@ class FeedForm extends Component {
       feedurlwarning: '',
       feedfrequencywarning: '',
       feedpostwarning: '',
+      formsubmit: false,
+      formsubmitmsg: '',
+      updatecount: 0,
+      formsubmitstatus: '',
     };
 
     this.handleInput = this.handleInput.bind(this);
     this.feedData = {
-      feedName: 'google',
-      feedUrl: 'rss.cnn.com/rss/edition.rss',
-      postType: 'text',
-      readFrequency: '6',
-      noPost: '5',
-      hashtag: '#social',
-      loginIds: '7585',
+      feedName: '',
+      feedUrl: '',
+      postType: '',
+      readFrequency: '',
+      noPost: '',
+      hashtag: '',
+      loginIds: '11157',
     };
     this.updateFeedData = this.updateFeedData.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
@@ -85,7 +89,7 @@ class FeedForm extends Component {
       });
     }
     this.updateFeedData(event);
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   createOptions(options) {
@@ -151,7 +155,7 @@ class FeedForm extends Component {
       case 'feedfrequency':
         const feedFrequencyError = validateFeedFrequency(event.target.value);
         if (feedFrequencyError === '') {
-          this.feedData.readFrequency = this.state.feedfrequency;
+          this.feedData.readFrequency = event.target.value;
           this.setState({
             feedfrequencywarning: '',
           });
@@ -166,7 +170,7 @@ class FeedForm extends Component {
       case 'feedpost':
         const feedPostError = validateFeedPost(event.target.value);
         if (this.feedPostError === '') {
-          this.feedData.noPost = this.state.feedpost;
+          this.feedData.noPost = event.target.value;
           this.setState({
             feedpostwarning: '',
           });
@@ -176,7 +180,7 @@ class FeedForm extends Component {
           });
         }
       case 'feedhashtag':
-        this.feedData.feedhashtag = {};
+        this.feedData.hashtag = event.target.value;
         break;
     }
   }
@@ -191,11 +195,37 @@ class FeedForm extends Component {
       this.state.feedfrequencywarning === ''
     ) {
       this.props.addFeed(this.feedData);
+      this.setState({
+        formsubmit: true,
+      });
+    } else {
+      this.setState({
+        formsubmit: true,
+        updatecount: 0,
+        formsubmitstatus: 'fail',
+        formsubmitmsg: 'Please provide fill in all the data fields',
+      });
     }
   }
 
+  componentWillMount() {}
+
   render() {
-    console.log('props: ', this.props);
+    console.log('props:', this.props);
+    if (this.props.feedsubmitmsg.status !== null) {
+      this.state.formsubmitmsg = this.props.feedsubmitmsg.msg;
+      this.state.formsubmitstatus = this.props.feedsubmitmsg.status;
+      console.log('form submit msg: ', this.state.formsubmitmsg);
+      console.log('form submit status: ', this.state.formsubmitstatus);
+      if (this.state.updatecount === 0) {
+        this.setState({
+          formsubmitmsg: this.props.feedsubmitmsg.msg,
+          formsubmitstatus: this.props.feedsubmitmsg.status,
+          updatecount: 1,
+        });
+      }
+    }
+
     return (
       <React.Fragment>
         <FormHeader />
@@ -212,7 +242,7 @@ class FeedForm extends Component {
             />
 
             <FormControl.Feedback />
-            <FormWarning msg={this.state.feednamewarning} />
+            <FormWarning msg={this.state.feednamewarning} type={'warning'} />
           </FormGroup>
           <FormGroup>
             <ControlLabel bsClass="control-label">Feed Url</ControlLabel>
@@ -224,7 +254,7 @@ class FeedForm extends Component {
               onChange={this.handleInput}
               onBlur={this.updateFeedData}
             />
-            <FormWarning msg={this.state.feedurlwarning} />
+            <FormWarning msg={this.state.feedurlwarning} type={'warning'} />
             <FormControl.Feedback />
           </FormGroup>
 
@@ -267,7 +297,7 @@ class FeedForm extends Component {
                 changefunc={this.handleInput}
               /> */}
             </div>
-            <FormWarning msg={this.state.feedfrequencywarning} />
+            <FormWarning msg={this.state.feedfrequencywarning} type={'warning'} />
           </FormGroup>
 
           <FormGroup>
@@ -279,7 +309,7 @@ class FeedForm extends Component {
                 {this.createOptions(this.noOfPostOptions)}
               </select>
             </div>
-            <FormWarning msg={this.state.feedpostwarning} />
+            <FormWarning msg={this.state.feedpostwarning} type={'warning'} />
           </FormGroup>
 
           <FormGroup>
@@ -306,6 +336,10 @@ class FeedForm extends Component {
               Cancel
             </a>
           </ButtonToolbar>
+          <FormWarning
+            msg={this.state.formsubmitmsg}
+            type={this.state.formsubmitstatus === 'success' ? 'success' : 'warning'}
+          />
         </form>
       </React.Fragment>
     );
@@ -333,8 +367,11 @@ const mapDispatchToProps = dispatch => ({
           })
           .then(response => {
             console.log(response);
-            if (response.data.status === undefined) {
-              resolve(response.data);
+            console.log(response.data);
+            console.log(response.data.response.feedId);
+            if (response.data.response.feedId !== undefined) {
+              console.log('in if condition');
+              resolve(response.data.response.feedId);
             }
           })
           .catch(error => {
